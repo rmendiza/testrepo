@@ -14,4 +14,4 @@ jobs:
        with:
         connection-string: ${{ secrets.AZURE_POSTGRESQL_CONNECTION_STRING }}
         server-name: server091625644.postgres.database.azure.com
-        plsql-file: "eomployeedb.sql"
+        plsql-file: "employeedb.sql"
