@@ -37,7 +37,7 @@ SELECT GENERATE_SERIES
      , CURRENT_DATE - CAST(floor(random() * 365 * 10 + 40 * 365) AS NUMERIC) * INTERVAL '1 DAY'
      , CAST(floor(random() * 9000 + 1000) AS NUMERIC)
      , 'junk'
-  FROM GENERATE_SERIES(1, 20);
+  FROM GENERATE_SERIES(1, 30);
 UPDATE employees 
    SET first_name='MARKUS', 
        last_name='WINAND'
