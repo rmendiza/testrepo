@@ -1,7 +1,8 @@
--- Check if the table already exists
-IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'employees') THEN
-  -- Create the table if it does not exist
-  CREATE TABLE employees (
+-- Get the current timestamp as a string
+SELECT TO_CHAR(CURRENT_TIMESTAMP, 'YYYYMMDDHH24MISS') INTO table_name;
+
+-- Create a dynamic SQL statement to create the table
+EXECUTE 'CREATE TABLE employees_' || table_name || ' (
      employee_id   NUMERIC       NOT NULL,
      first_name    VARCHAR(1000) NOT NULL,
      last_name     VARCHAR(1000) NOT NULL,
@@ -9,9 +10,8 @@ IF NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'emplo
      phone_number  VARCHAR(1000) NOT NULL,
      junk          CHAR(1000)             ,
      last_modified TIMESTAMP              , -- Add a last_modified column
-     CONSTRAINT employees_pk PRIMARY KEY (employee_id)
-  );
-END IF;
+     CONSTRAINT employees_pk_' || table_name || ' PRIMARY KEY (employee_id)
+  );';
 
 CREATE FUNCTION random_string(minlen NUMERIC, maxlen NUMERIC)
 RETURNS VARCHAR(1000)
@@ -34,20 +34,26 @@ BEGIN
   RETURN rv;
 END;
 $$ LANGUAGE plpgsql;
-INSERT INTO employees (employee_id,  first_name,
+
+-- Create a dynamic SQL statement to insert data into the table
+EXECUTE 'INSERT INTO employees_' || table_name || ' (employee_id,  first_name,
                        last_name,    date_of_birth, 
                        phone_number, junk, last_modified)
 SELECT GENERATE_SERIES
      , initcap(lower(random_string(2, 8)))
      , initcap(lower(random_string(2, 8)))
-     , CURRENT_DATE - CAST(floor(random() * 365 * 10 + 40 * 365) AS NUMERIC) * INTERVAL '1 DAY'
+     , CURRENT_DATE - CAST(floor(random() * 365 * 10 + 40 * 365) AS NUMERIC) * INTERVAL ''1 DAY''
      , CAST(floor(random() * 9000 + 1000) AS NUMERIC)
-     , 'junk'
+     , ''junk''
      , CURRENT_TIMESTAMP -- Set the last_modified column to the current timestamp
-  FROM GENERATE_SERIES(1, 30);
-UPDATE employees 
-   SET first_name='MARKUS', 
-       last_name='WINAND',
+  FROM GENERATE_SERIES(1, 30);';
+
+-- Create a dynamic SQL statement to update data in the table
+EXECUTE 'UPDATE employees_' || table_name || '
+   SET first_name=''MARKUS'', 
+       last_name=''WINAND'',
        last_modified = CURRENT_TIMESTAMP -- Update the last_modified column when changing other columns
- WHERE employee_id=123;
-VACUUM ANALYZE employees;
+ WHERE employee_id=123;';
+
+-- Create a dynamic SQL statement to vacuum analyze the table
+EXECUTE 'VACUUM ANALYZE employees_' || table_name || ';';
