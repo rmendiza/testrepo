@@ -13,27 +13,31 @@ EXECUTE 'CREATE TABLE employees_' || table_name || ' (
      CONSTRAINT employees_pk_' || table_name || ' PRIMARY KEY (employee_id)
   );';
 
-CREATE FUNCTION random_string(minlen NUMERIC, maxlen NUMERIC)
-RETURNS VARCHAR(1000)
-AS
-$$
-DECLARE
-  rv VARCHAR(20) := '';
-  i  INTEGER := 0;
-  len INTEGER := 0;
-BEGIN
-  IF maxlen < 1 OR minlen < 1 OR maxlen < minlen THEN
+-- Check if the function already exists
+IF NOT EXISTS (SELECT 1 FROM information_schema.routines WHERE routine_name = 'random_string') THEN
+  -- Create the function if it does not exist
+  CREATE FUNCTION random_string(minlen NUMERIC, maxlen NUMERIC)
+  RETURNS VARCHAR(1000)
+  AS
+  $$
+  DECLARE
+    rv VARCHAR(20) := '';
+    i  INTEGER := 0;
+    len INTEGER := 0;
+  BEGIN
+    IF maxlen < 1 OR minlen < 1 OR maxlen < minlen THEN
+      RETURN rv;
+    END IF;
+
+    len := floor(random()*(maxlen-minlen)) + minlen;
+
+    FOR i IN 1..floor(len) LOOP
+      rv := rv || chr(97+CAST(random() * 25 AS INTEGER));
+    END LOOP;
     RETURN rv;
-  END IF;
-
-  len := floor(random()*(maxlen-minlen)) + minlen;
-
-  FOR i IN 1..floor(len) LOOP
-    rv := rv || chr(97+CAST(random() * 25 AS INTEGER));
-  END LOOP;
-  RETURN rv;
-END;
-$$ LANGUAGE plpgsql;
+  END;
+  $$ LANGUAGE plpgsql;
+END IF;
 
 -- Create a dynamic SQL statement to insert data into the table
 EXECUTE 'INSERT INTO employees_' || table_name || ' (employee_id,  first_name,
