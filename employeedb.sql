@@ -1,5 +1,5 @@
-SELECT TO_CHAR(CURRENT_TIMESTAMP, 'YYYYMMDDHH24MISS') INTO table_name;
-CREATE TABLE employees_ || table_name (
+DROP TABLE employees;
+CREATE TABLE employees (
    employee_id   NUMERIC       NOT NULL,
    first_name    VARCHAR(1000) NOT NULL,
    last_name     VARCHAR(1000) NOT NULL,
