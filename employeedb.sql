@@ -8,7 +8,7 @@ CREATE TABLE employees (
    junk          CHAR(1000)             ,
    CONSTRAINT employees_pk PRIMARY KEY (employee_id)
 );
--- CREATE FUNCTION random_string(minlen NUMERIC, maxlen NUMERIC)
+CREATE FUNCTION random_string(minlen NUMERIC, maxlen NUMERIC)
 RETURNS VARCHAR(1000)
 AS
 $$
