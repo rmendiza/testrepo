@@ -1,4 +1,3 @@
-DROP TABLE employees;
 CREATE TABLE employees (
    employee_id   NUMERIC       NOT NULL,
    first_name    VARCHAR(1000) NOT NULL,
