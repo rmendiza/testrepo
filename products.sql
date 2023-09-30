@@ -1,4 +1,5 @@
 -- Create a table for products
+DROP TABLE products;
 CREATE TABLE products (
    product_id   SERIAL       NOT NULL, -- Use SERIAL for primary key
    product_name VARCHAR(50)  NOT NULL, -- Use smaller size for VARCHAR
