@@ -1,0 +1,26 @@
+# Workflow configuration file for GitHub actions for Azure postgresql server
+name: postgresql_testrepo_testdb
+
+on: 
+  push: 
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2.3.2
+    - uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - uses: azure/postgresql@v1
+      with:
+        server-name: rmendizabal-pgflex.postgres.database.azure.com
+        connection-string: ${{ secrets.AZURE_POSTGRESQLFLEXIBLE_CONNECTION_STRING }}
+        plsql-file: "employeedb.sql"
+
+    - name: logout
+      run: |
+        az logout
